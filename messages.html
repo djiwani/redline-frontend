@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redline — My Negotiations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --red: #e8173a;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #161616;
+    --border: #222222;
+    --muted: #555555;
+    --text: #e8e8e8;
+    --buyer: #1a3a2a;
+    --buyer-border: #2d6b47;
+    --buyer-text: #5dba85;
+    --seller: #1a1a2e;
+    --seller-border: #2d2d5a;
+    --seller-text: #7b7bff;
+    --system: #1e1a0e;
+    --system-border: #4a3d10;
+    --system-text: #c4a84a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--black);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--red); }
+
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  #user-name {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  .page-header {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .page-title span { color: var(--red); }
+
+  .sessions-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    padding-bottom: 6px;
+  }
+
+  /* LOADING / EMPTY */
+  .state-message {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .state-message .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  /* SESSION CARDS */
+  .sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .session-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .session-card:hover { border-color: #333; }
+
+  .session-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .session-header:hover { background: #1a1a1a; }
+
+  .session-left { display: flex; align-items: center; gap: 16px; }
+
+  .session-outcome {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .outcome-deal { background: #2d6b47; box-shadow: 0 0 8px #2d6b47; }
+  .outcome-failed { background: #6b2d2d; box-shadow: 0 0 8px #6b2d2d; }
+  .outcome-ongoing { background: #6b5d2d; box-shadow: 0 0 8px #6b5d2d; }
+
+  .session-listing {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .session-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .session-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .session-price {
+    text-align: right;
+  }
+
+  .price-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .price-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1px;
+  }
+
+  .price-value.deal { color: var(--buyer-text); }
+  .price-value.listing { color: var(--text); }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .badge-deal { background: var(--buyer); color: var(--buyer-text); border: 1px solid var(--buyer-border); }
+  .badge-failed { background: #1a0d0d; color: #cc5555; border: 1px solid #4a1a1a; }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+
+  .session-card.open .chevron { transform: rotate(180deg); }
+
+  /* CONVERSATION */
+  .conversation {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+
+  .session-card.open .conversation { display: block; }
+
+  .conv-meta-bar {
+    display: flex;
+    gap: 32px;
+    padding: 16px 24px;
+    background: #0e0e0e;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .conv-meta-bar span { color: var(--text); }
+
+  .messages-list {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .message-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  .avatar-buyer { background: var(--buyer); color: var(--buyer-text); border: 1px solid var(--buyer-border); }
+  .avatar-seller { background: var(--seller); color: var(--seller-text); border: 1px solid var(--seller-border); }
+  .avatar-system { background: var(--system); color: var(--system-text); border: 1px solid var(--system-border); }
+
+  .msg-body { flex: 1; }
+
+  .msg-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .msg-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .role-buyer { color: var(--buyer-text); }
+  .role-seller { color: var(--seller-text); }
+  .role-system { color: var(--system-text); }
+
+  .msg-offer {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .msg-offer strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .msg-round {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #333;
+  }
+
+  .msg-text {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
+  }
+
+  .msg-row-buyer .msg-text { border-left: 2px solid var(--buyer-border); }
+  .msg-row-seller .msg-text { border-left: 2px solid var(--seller-border); }
+  .msg-row-system .msg-text { border-left: 2px solid var(--system-border); font-style: italic; font-size: 13px; }
+
+  /* AUTH GATE */
+  .auth-gate {
+    text-align: center;
+    padding: 80px 0;
+  }
+
+  .auth-gate p { color: var(--muted); margin-bottom: 24px; font-size: 15px; }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--red); color: white; }
+  .btn-primary:hover { background: #cc1530; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">REDLINE<span>.</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="listing.html">Listings</a>
+    <a href="messages.html" class="active">Negotiations</a>
+    <span id="user-name">Loading...</span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">MY <span>NEGOTIATIONS</span></h1>
+    <div class="sessions-count" id="sessions-count"></div>
+  </div>
+
+  <div id="content">
+    <div class="state-message">
+      <span class="icon">⚡</span>
+      Loading your negotiations...
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.6/dist/amazon-cognito-identity.min.js"></script>
+<script>
+const API_BASE = 'https://api.redline.fourallthedogs.com';
+const POOL_DATA = {
+  UserPoolId: 'us-east-1_fGQUmd0nR',
+  ClientId: '70jt4r4pe5kuehheombbrrkblu'
+};
+const userPool = new AmazonCognitoIdentity.CognitoUserPool(POOL_DATA);
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function formatPrice(p) {
+  if (!p && p !== 0) return '—';
+  return '$' + Number(p).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function getRoleLabel(role) {
+  if (role === 'buyer') return 'BOT';
+  if (role === 'seller') return 'SELLER';
+  return 'SYS';
+}
+
+function buildConversation(session) {
+  const msgs = session.messages || [];
+  const systemMsg = msgs.find(m => Number(m.round_number) === 0);
+  const convoMsgs = msgs.filter(m => Number(m.round_number) > 0);
+
+  // Find the final agreed price from last message if deal reached
+  const lastMsg = convoMsgs[convoMsgs.length - 1];
+  const agreedPrice = session.agreed_price;
+
+  let metaBar = `
+    <div class="conv-meta-bar">
+      <div>LISTING PRICE <span>${formatPrice(session.listing_price)}</span></div>
+      <div>BUDGET <span>${formatPrice(session.buyer_budget)}</span></div>
+      <div>ROUNDS <span>${convoMsgs.filter(m => m.role === 'buyer').length}</span></div>
+      ${agreedPrice ? `<div>SETTLED <span>${formatPrice(agreedPrice)}</span></div>` : ''}
+      <div>SESSION <span style="font-size:10px">${session.session_id.substring(0,8)}...</span></div>
+    </div>`;
+
+  let msgsHtml = '';
+
+  // Show system opening message
+  if (systemMsg) {
+    msgsHtml += `
+      <div class="message-row msg-row-system">
+        <div class="msg-avatar avatar-system">SYS</div>
+        <div class="msg-body">
+          <div class="msg-header">
+            <span class="msg-role role-system">System</span>
+            <span class="msg-round">Round 0</span>
+            <span class="msg-offer">${formatDate(systemMsg.timestamp)}</span>
+          </div>
+          <div class="msg-text">${systemMsg.message}</div>
+        </div>
+      </div>`;
+  }
+
+  // Show all conversation rounds
+  convoMsgs.forEach(msg => {
+    const role = msg.role;
+    const avatarClass = role === 'buyer' ? 'avatar-buyer' : 'avatar-seller';
+    const roleClass = role === 'buyer' ? 'role-buyer' : 'role-seller';
+    const rowClass = role === 'buyer' ? 'msg-row-buyer' : 'msg-row-seller';
+    const label = getRoleLabel(role);
+    const displayRole = role === 'buyer' ? 'Your Bot (Buyer)' : 'Seller Bot';
+
+    msgsHtml += `
+      <div class="message-row ${rowClass}">
+        <div class="msg-avatar ${avatarClass}">${label}</div>
+        <div class="msg-body">
+          <div class="msg-header">
+            <span class="msg-role ${roleClass}">${displayRole}</span>
+            <span class="msg-round">Round ${msg.round_number}</span>
+            <span class="msg-offer">Offer: <strong>${formatPrice(msg.offer_price)}</strong></span>
+          </div>
+          <div class="msg-text">${msg.message}</div>
+        </div>
+      </div>`;
+  });
+
+  return `<div class="conversation">
+    ${metaBar}
+    <div class="messages-list">${msgsHtml}</div>
+  </div>`;
+}
+
+function buildSessionCard(session) {
+  const msgs = session.messages || [];
+  const convoMsgs = msgs.filter(m => Number(m.round_number) > 0);
+  const lastMsg = convoMsgs[convoMsgs.length - 1];
+
+  // Determine outcome
+  const buyerAccepted = convoMsgs.filter(m => m.role === 'buyer').some(m => {
+    // Check if buyer's last message accepted a deal
+    return false; // We'll derive from price convergence
+  });
+
+  const sellerFinal = convoMsgs.filter(m => m.role === 'seller').pop();
+  const buyerFinal = convoMsgs.filter(m => m.role === 'buyer').pop();
+
+  let outcome = 'failed';
+  let agreedPrice = null;
+
+  if (sellerFinal && buyerFinal) {
+    const sp = Number(sellerFinal.offer_price);
+    const bp = Number(buyerFinal.offer_price);
+    // Deal reached if prices converged or seller came down to meet buyer
+    if (Math.abs(sp - bp) < 50 || sp <= bp) {
+      outcome = 'deal';
+      agreedPrice = Math.min(sp, bp);
+      session.agreed_price = agreedPrice;
+    }
+  } else if (sellerFinal && !buyerFinal) {
+    // Seller accepted buyer's budget (seller capitulated)
+    const sp = Number(sellerFinal.offer_price);
+    const budget = session.buyer_budget;
+    if (budget && sp <= budget) {
+      outcome = 'deal';
+      agreedPrice = sp;
+      session.agreed_price = agreedPrice;
+    }
+  }
+
+  const outcomeClass = outcome === 'deal' ? 'outcome-deal' : 'outcome-failed';
+  const badgeHtml = outcome === 'deal'
+    ? `<span class="badge badge-deal">✓ Deal</span>`
+    : `<span class="badge badge-failed">No Deal</span>`;
+
+  const priceHtml = outcome === 'deal' && agreedPrice
+    ? `<div class="session-price">
+        <div class="price-label">Agreed Price</div>
+        <div class="price-value deal">${formatPrice(agreedPrice)}</div>
+      </div>`
+    : `<div class="session-price">
+        <div class="price-label">Listing Price</div>
+        <div class="price-value listing">${formatPrice(session.listing_price)}</div>
+      </div>`;
+
+  const rounds = convoMsgs.filter(m => m.role === 'buyer').length;
+
+  return `
+    <div class="session-card" onclick="toggleSession(this)">
+      <div class="session-header">
+        <div class="session-left">
+          <div class="session-outcome ${outcomeClass}"></div>
+          <div>
+            <div class="session-listing">${session.listing || 'Unknown Vehicle'}</div>
+            <div class="session-meta">${formatDate(session.timestamp)} · ${rounds} round${rounds !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+        <div class="session-right">
+          ${priceHtml}
+          ${badgeHtml}
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      ${buildConversation(session)}
+    </div>`;
+}
+
+function toggleSession(card) {
+  card.classList.toggle('open');
+}
+
+
+
+async function loadHistory(userId, idToken) {
+  try {
+    const res = await fetch(`${API_BASE}/negotiate/history/${userId}`, {
+      headers: { 'Authorization': `Bearer ${idToken}` }
+    });
+    if (!res.ok) throw new Error('Failed to load');
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+function init() {
+  const contentEl = document.getElementById('content');
+  const countEl = document.getElementById('sessions-count');
+  const userNameEl = document.getElementById('user-name');
+
+  const cognitoUser = userPool.getCurrentUser();
+
+  if (!cognitoUser) {
+    contentEl.innerHTML = `
+      <div class="auth-gate">
+        <p>Sign in to view your negotiation history.</p>
+        <a href="login.html" class="btn btn-primary">Sign In</a>
+      </div>`;
+    userNameEl.textContent = 'Not signed in';
+    return;
+  }
+
+  cognitoUser.getSession(async (err, session) => {
+    if (err || !session.isValid()) {
+      contentEl.innerHTML = `<div class="state-message"><span class="icon">⚠</span>Session expired. Please sign in again.</div>`;
+      return;
+    }
+
+    const idToken = session.getIdToken().getJwtToken();
+    const userId = cognitoUser.getUsername();
+
+    // Get display name
+    cognitoUser.getUserAttributes((err, attrs) => {
+      if (!err && attrs) {
+        const name = attrs.find(a => a.getName() === 'name');
+        if (name) userNameEl.textContent = name.getValue();
+        else userNameEl.textContent = userId;
+      }
+    });
+
+    const data = await loadHistory(userId, idToken);
+
+    if (!data || !data.sessions || data.sessions.length === 0) {
+      contentEl.innerHTML = `
+        <div class="state-message">
+          <span class="icon">🤝</span>
+          No negotiations yet.<br>
+          <a href="listing.html" style="color: var(--red); text-decoration: none; margin-top: 12px; display: inline-block;">Browse listings to start one →</a>
+        </div>`;
+      countEl.textContent = '';
+      return;
+    }
+
+    const sessions = data.sessions;
+    countEl.textContent = `${sessions.length} session${sessions.length !== 1 ? 's' : ''}`;
+    contentEl.innerHTML = `<div class="sessions-list">${sessions.map(buildSessionCard).join('')}</div>`;
+  });
+}
+
+init();
+</script>
+</body>
+</html>

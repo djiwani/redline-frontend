@@ -416,6 +416,7 @@
   </a>
   <div class="nav-right">
     <span class="nav-user" id="navUser"></span>
+    <a href="/messages.html" class="btn-outline" id="navNegotiations" style="display:none">My Negotiations</a>
     <a href="/login.html" class="btn-outline" id="loginBtn">Sign in</a>
     <button class="btn-red" id="logoutBtn" style="display:none" onclick="signOut()">Sign out</button>
   </div>
@@ -488,13 +489,14 @@ window.onload = function() {
     user.getSession((err, session) => {
       if (!err && session.isValid()) {
         user.getUserAttributes((err, attrs) => {
-		  if (!err) {
-			const name = attrs.find(a => a.getName() === 'name');
-			if (name) document.getElementById('navUser').textContent = name.getValue();
-		  }
-		});
+          if (!err) {
+            const name = attrs.find(a => a.getName() === 'name');
+            if (name) document.getElementById('navUser').textContent = name.getValue();
+          }
+        });
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('logoutBtn').style.display = 'block';
+        document.getElementById('navNegotiations').style.display = 'block';
       }
     });
   }
