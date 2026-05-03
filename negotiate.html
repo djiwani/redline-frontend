@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negotiation Result — Redline</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8192c;
+    --red-dark: #c0141f;
+    --green: #16a34a;
+    --black: #0f0f0f;
+    --gray-700: #3a3a3a;
+    --gray-500: #6b6b6b;
+    --gray-300: #c8c8c8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --border: #e8e8e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    text-decoration: none;
+  }
+
+  .nav-logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--black);
+    letter-spacing: 2px;
+  }
+
+  .nav-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 6px;
+  }
+
+  .result-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 48px;
+    text-align: center;
+  }
+
+  .result-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .result-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 20px;
+  }
+
+  .tag-success {
+    background: rgba(22,163,74,0.1);
+    border: 1px solid rgba(22,163,74,0.25);
+    color: var(--green);
+  }
+
+  .tag-failed {
+    background: rgba(232,25,44,0.08);
+    border: 1px solid rgba(232,25,44,0.2);
+    color: var(--red);
+  }
+
+  .result-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .result-subtitle {
+    font-size: 16px;
+    color: var(--gray-500);
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .deal-card {
+    background: var(--black);
+    color: var(--white);
+    border-radius: 20px;
+    padding: 36px;
+    margin-bottom: 32px;
+    animation: slideUp 0.4s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .deal-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .deal-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    letter-spacing: 2px;
+    color: #4ade80;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .deal-note {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    animation: slideUp 0.4s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .stat-box {
+    flex: 1;
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1px;
+    color: var(--black);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  .session-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-300);
+    margin-bottom: 32px;
+    animation: slideUp 0.4s 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    animation: slideUp 0.4s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .btn-red {
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .btn-red:hover { background: var(--red-dark); }
+
+  .btn-outline {
+    border: 1.5px solid var(--border);
+    background: none;
+    color: var(--black);
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .btn-outline:hover { border-color: var(--black); }
+
+  .email-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(22,163,74,0.05);
+    border: 1px solid rgba(22,163,74,0.15);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    text-align: left;
+    animation: slideUp 0.4s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .email-note p {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Redline</span>
+    <div class="nav-logo-dot"></div>
+  </a>
+</nav>
+
+<div class="result-page" id="resultPage">
+  <!-- Filled by JS -->
+</div>
+
+<script>
+function formatPrice(price) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+}
+
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  const outcome = params.get('outcome');
+  const price = parseFloat(params.get('price'));
+  const rounds = parseInt(params.get('rounds')) || 0;
+  const sessionId = params.get('session');
+
+  const page = document.getElementById('resultPage');
+
+  if (outcome === 'deal_reached' && price) {
+    page.innerHTML = `
+      <div class="result-icon">🤝</div>
+      <div class="result-tag tag-success">✓ Deal Reached</div>
+      <div class="result-title">Your Bot<br>Closed the Deal.</div>
+      <p class="result-subtitle">The AI negotiated successfully. Check your email for confirmation details.</p>
+
+      <div class="deal-card">
+        <div class="deal-label">Agreed Price</div>
+        <div class="deal-price">${formatPrice(price)}</div>
+        <div class="deal-note">Negotiated in ${rounds} round${rounds !== 1 ? 's' : ''}</div>
+      </div>
+
+      <div class="email-note">
+        <span style="font-size:20px">📧</span>
+        <p>We've sent you an email confirmation. Reply to the seller to complete your purchase.</p>
+      </div>
+
+      <div class="session-id">Session: ${sessionId}</div>
+
+      <div class="action-buttons">
+        <a href="/" class="btn-red">Browse More Cars</a>
+        <a href="/" class="btn-outline">Back to Listings</a>
+      </div>
+    `;
+  } else {
+    const reason = params.get('reason') || 'No deal could be reached after maximum rounds.';
+    page.innerHTML = `
+      <div class="result-icon">😔</div>
+      <div class="result-tag tag-failed">✗ No Deal</div>
+      <div class="result-title">Negotiation<br>Failed.</div>
+      <p class="result-subtitle">${reason} Try increasing your budget or browsing other listings.</p>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-val">${rounds}</div>
+          <div class="stat-label">Rounds</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">—</div>
+          <div class="stat-label">No Deal</div>
+        </div>
+      </div>
+
+      <div class="session-id">Session: ${sessionId}</div>
+
+      <div class="action-buttons">
+        <a href="/" class="btn-red">Try Another Car</a>
+        <a href="javascript:history.back()" class="btn-outline">Go Back</a>
+      </div>
+    `;
+  }
+};
+</script>
+</body>
+</html>

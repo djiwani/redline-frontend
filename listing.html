@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing — Redline</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8192c;
+    --red-dark: #c0141f;
+    --black: #0f0f0f;
+    --gray-700: #3a3a3a;
+    --gray-500: #6b6b6b;
+    --gray-300: #c8c8c8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --border: #e8e8e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    text-decoration: none;
+  }
+
+  .nav-logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--black);
+    letter-spacing: 2px;
+  }
+
+  .nav-logo-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 6px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .nav-user {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .btn-outline {
+    border: 1.5px solid var(--border);
+    background: none;
+    color: var(--black);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .btn-outline:hover { border-color: var(--black); }
+
+  .btn-red {
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .btn-red:hover { background: var(--red-dark); }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray-500);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 32px 48px 0;
+    transition: color 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .back-link:hover { color: var(--black); }
+
+  .listing-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 48px 80px;
+  }
+
+  .listing-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 48px;
+    margin-top: 32px;
+  }
+
+  /* LEFT SIDE */
+  .car-hero-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--gray-100);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 120px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .car-hero-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
+  }
+
+  .listing-make {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .listing-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .listing-desc {
+    font-size: 15px;
+    color: var(--gray-700);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .listing-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .spec-item {
+    background: var(--gray-100);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .spec-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .spec-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* RIGHT SIDE — NEGOTIATION PANEL */
+  .negotiate-panel {
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+  }
+
+  .price-display {
+    background: var(--black);
+    color: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .price-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .negotiate-form {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--gray-100);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field-input:focus { border-color: var(--red); background: var(--white); border: 1.5px solid var(--red); }
+
+  .negotiate-btn {
+    width: 100%;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .negotiate-btn:hover { background: var(--red-dark); }
+  .negotiate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .login-prompt {
+    text-align: center;
+    padding: 20px;
+    background: var(--gray-100);
+    border-radius: 10px;
+    margin-top: 16px;
+  }
+
+  .login-prompt p {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+  }
+
+  .login-prompt a {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .ai-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(232,25,44,0.05);
+    border: 1px solid rgba(232,25,44,0.15);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .ai-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .ai-note p {
+    font-size: 12px;
+    color: var(--gray-700);
+    line-height: 1.5;
+  }
+
+  .error-msg {
+    background: rgba(232,25,44,0.08);
+    border: 1px solid rgba(232,25,44,0.2);
+    color: var(--red);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .loading { text-align: center; padding: 80px 48px; color: var(--gray-500); }
+  .loading-spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Redline</span>
+    <div class="nav-logo-dot"></div>
+  </a>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser"></span>
+    <a href="/login.html" class="btn-outline" id="loginBtn">Sign in</a>
+    <button class="btn-red" id="logoutBtn" style="display:none" onclick="signOut()">Sign out</button>
+  </div>
+</nav>
+
+<a href="/" class="back-link">← All listings</a>
+
+<div class="listing-page" id="listingPage">
+  <div class="loading">
+    <div class="loading-spinner"></div>
+    Loading listing...
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.6/dist/amazon-cognito-identity.min.js"></script>
+<script>
+const API = 'https://api.redline.fourallthedogs.com';
+const POOL_DATA = {
+  UserPoolId: 'us-east-1_fGQUmd0nR',
+  ClientId: '70jt4r4pe5kuehheombbrrkblu'
+};
+const userPool = new AmazonCognitoIdentity.CognitoUserPool(POOL_DATA);
+
+let currentUser = null;
+let currentListing = null;
+
+const COLOR_MAP = {
+  'red': '#e8192c', 'blue': '#2563eb', 'black': '#0f0f0f',
+  'white': '#f8f8f8', 'silver': '#c0c0c0', 'gray': '#6b7280',
+  'navy': '#1e3a5f', 'green': '#16a34a', 'orange': '#ea580c'
+};
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+}
+
+function formatMileage(miles) {
+  return new Intl.NumberFormat('en-US').format(miles) + ' mi';
+}
+
+window.onload = async function() {
+  // Check auth
+  const user = userPool.getCurrentUser();
+  if (user) {
+    user.getSession((err, session) => {
+      if (!err && session.isValid()) {
+        currentUser = user;
+        document.getElementById('navUser').textContent = user.getUsername();
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'block';
+      }
+    });
+  }
+
+  // Load listing
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location.href = '/'; return; }
+
+  try {
+    const res = await fetch(`${API}/listings/${id}`);
+    const data = await res.json();
+    currentListing = data.listing;
+    renderListing(currentListing);
+  } catch(e) {
+    document.getElementById('listingPage').innerHTML = `<p>Failed to load listing.</p>`;
+  }
+};
+
+function signOut() {
+  const user = userPool.getCurrentUser();
+  if (user) user.signOut();
+  window.location.reload();
+}
+
+function renderListing(l) {
+  const colorHex = COLOR_MAP[l.color?.toLowerCase()] || '#c8c8c8';
+  const isLoggedIn = !!currentUser;
+
+  document.title = `${l.year} ${l.make} ${l.model} — Redline`;
+
+  document.getElementById('listingPage').innerHTML = `
+    <div class="listing-grid">
+      <div class="listing-left">
+        <div class="car-hero-image">🚗</div>
+        <div class="listing-make">${l.make}</div>
+        <div class="listing-title">${l.year} ${l.model}</div>
+        <div class="listing-desc">${l.description || 'No description available.'}</div>
+        <div class="listing-specs">
+          <div class="spec-item">
+            <div class="spec-label">Mileage</div>
+            <div class="spec-value">${formatMileage(l.mileage)}</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Color</div>
+            <div class="spec-value" style="display:flex;align-items:center;gap:8px">
+              <span style="width:14px;height:14px;border-radius:50%;background:${colorHex};border:1px solid #e8e8e8;flex-shrink:0"></span>
+              ${l.color}
+            </div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Year</div>
+            <div class="spec-value">${l.year}</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Listing ID</div>
+            <div class="spec-value" style="font-family:'DM Mono',monospace;font-size:13px">#${l.id}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="negotiate-panel">
+        <div class="price-display">
+          <div class="price-label">Asking Price</div>
+          <div class="price-amount">${formatPrice(l.price)}</div>
+          <div class="price-note">Negotiable via AI</div>
+        </div>
+
+        <div class="negotiate-form">
+          <div class="form-title">Start Negotiation</div>
+          <div class="form-subtitle">Our AI buyer bot will negotiate on your behalf. You'll be notified when a deal is reached.</div>
+
+          ${isLoggedIn ? `
+            <div class="error-msg" id="errorMsg"></div>
+            <div class="field">
+              <label class="field-label">Your Max Budget</label>
+              <input class="field-input" type="number" id="budgetInput" placeholder="${Math.round(l.price * 0.85)}" min="1000">
+            </div>
+            <div class="field">
+              <label class="field-label">Notification Email</label>
+              <input class="field-input" type="email" id="emailInput" placeholder="${currentUser?.getUsername() || 'you@example.com'}">
+            </div>
+            <button class="negotiate-btn" id="negotiateBtn" onclick="startNegotiation()">
+              ⚡ NEGOTIATE NOW
+            </button>
+          ` : `
+            <div class="login-prompt">
+              <p>Sign in to start an AI negotiation on this vehicle.</p>
+              <a href="/login.html">Sign in or create account →</a>
+            </div>
+          `}
+
+          <div class="ai-note">
+            <div class="ai-note-icon">🤖</div>
+            <p>Our AI runs up to 10 negotiation rounds. You'll receive an email notification when a deal is reached or if negotiation fails.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function startNegotiation() {
+  const budget = parseFloat(document.getElementById('budgetInput').value);
+  const email = document.getElementById('emailInput').value || currentUser?.getUsername();
+
+  if (!budget || budget < 1000) {
+    showError('Please enter a valid budget (minimum $1,000)');
+    return;
+  }
+
+  if (!email) {
+    showError('Please enter your notification email');
+    return;
+  }
+
+  const btn = document.getElementById('negotiateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Starting negotiation...';
+
+  try {
+    const res = await fetch(`${API}/negotiate/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: currentUser.getUsername(),
+        listing_id: currentListing.id,
+        listing_make: currentListing.make,
+        listing_model: currentListing.model,
+        listing_year: currentListing.year,
+        listing_price: currentListing.price,
+        seller_floor: currentListing.price * 0.85,
+        buyer_budget: budget,
+        user_email: email
+      })
+    });
+
+    const data = await res.json();
+    window.location.href = `/negotiate.html?session=${data.session_id}&outcome=${data.outcome}&price=${data.agreed_price || ''}&rounds=${data.rounds}`;
+  } catch(e) {
+    showError('Failed to start negotiation. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = '⚡ NEGOTIATE NOW';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+</script>
+</body>
+</html>

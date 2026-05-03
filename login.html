@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Redline</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8192c;
+    --red-dark: #c0141f;
+    --black: #0f0f0f;
+    --gray-700: #3a3a3a;
+    --gray-500: #6b6b6b;
+    --gray-300: #c8c8c8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --border: #e8e8e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-100);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    text-decoration: none;
+  }
+
+  .nav-logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--black);
+    letter-spacing: 2px;
+  }
+
+  .nav-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 6px;
+  }
+
+  .auth-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .auth-header {
+    background: var(--black);
+    padding: 32px 32px 28px;
+    color: var(--white);
+  }
+
+  .auth-logo {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 16px;
+    text-decoration: none;
+  }
+
+  .auth-logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--white);
+    letter-spacing: 3px;
+  }
+
+  .auth-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-left: 3px;
+    margin-bottom: 6px;
+  }
+
+  .auth-header h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+  }
+
+  .auth-header h2 strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  .auth-body { padding: 28px 32px 32px; }
+
+  .tabs {
+    display: flex;
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--gray-500);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--black);
+    border: 1px solid var(--border);
+    font-weight: 600;
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--gray-100);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    outline: none;
+    transition: all 0.15s;
+  }
+
+  .field-input:focus {
+    border-color: var(--red);
+    background: var(--white);
+  }
+
+  .field-input::placeholder { color: var(--gray-300); }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .error-msg {
+    background: rgba(232,25,44,0.08);
+    border: 1px solid rgba(232,25,44,0.2);
+    color: var(--red);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .success-msg {
+    background: rgba(22,163,74,0.08);
+    border: 1px solid rgba(22,163,74,0.2);
+    color: #16a34a;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  #signupFields { display: none; }
+  #verifyField { display: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Redline</span>
+    <div class="nav-logo-dot"></div>
+  </a>
+</nav>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <span class="auth-logo-text">Redline</span>
+        <div class="auth-logo-dot"></div>
+      </div>
+      <h2>Let the <strong>AI negotiate</strong> for you.</h2>
+    </div>
+
+    <div class="auth-body">
+      <div class="tabs">
+        <button class="tab-btn active" id="signinTab" onclick="switchTab('signin')">Sign in</button>
+        <button class="tab-btn" id="signupTab" onclick="switchTab('signup')">Create account</button>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="success-msg" id="successMsg"></div>
+
+      <div class="field">
+        <label class="field-label">Email</label>
+        <input id="email" class="field-input" type="email" placeholder="you@example.com">
+      </div>
+
+      <div id="signupFields">
+        <div class="field">
+          <label class="field-label">Full Name</label>
+          <input id="fullName" class="field-input" type="text" placeholder="Alex Johnson">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Password</label>
+        <input id="password" class="field-input" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter') handleSubmit()">
+      </div>
+
+      <div class="field" id="verifyField">
+        <label class="field-label">Verification Code</label>
+        <input id="verifyCode" class="field-input" type="text" placeholder="123456">
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.6/dist/amazon-cognito-identity.min.js"></script>
+<script>
+const POOL_DATA = {
+  UserPoolId: 'us-east-1_fGQUmd0nR',
+  ClientId: '70jt4r4pe5kuehheombbrrkblu'
+};
+const userPool = new AmazonCognitoIdentity.CognitoUserPool(POOL_DATA);
+let mode = 'signin';
+let pendingUser = null;
+
+function switchTab(tab) {
+  mode = tab;
+  document.getElementById('signinTab').classList.toggle('active', tab === 'signin');
+  document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
+  document.getElementById('signupFields').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('submitBtn').textContent = tab === 'signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('verifyField').style.display = 'none';
+  clearMessages();
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('successMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('errorMsg').style.display = 'none';
+}
+
+function clearMessages() {
+  document.getElementById('errorMsg').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'none';
+}
+
+function handleSubmit() {
+  if (mode === 'signin') signIn();
+  else if (mode === 'signup') signUp();
+  else if (mode === 'verify') verify();
+}
+
+function signIn() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('submitBtn');
+
+  const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: password });
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
+
+  btn.disabled = true; btn.textContent = 'Signing in...';
+
+  cognitoUser.authenticateUser(authDetails, {
+    onSuccess: () => { window.location.href = '/'; },
+    onFailure: (err) => {
+      showError(err.message);
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+  });
+}
+
+function signUp() {
+  const email = document.getElementById('email').value;
+  const fullName = document.getElementById('fullName').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('submitBtn');
+
+  if (!fullName) { showError('Please enter your full name.'); return; }
+
+  const attributeList = [
+    new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email }),
+    new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'name', Value: fullName }),
+  ];
+
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  userPool.signUp(email, password, attributeList, null, (err, result) => {
+    if (err) {
+      showError(err.message);
+      btn.disabled = false; btn.textContent = 'Create Account';
+      return;
+    }
+    pendingUser = result.user;
+    mode = 'verify';
+    document.getElementById('verifyField').style.display = 'block';
+    document.getElementById('submitBtn').textContent = 'Verify Email';
+    document.getElementById('submitBtn').disabled = false;
+    showSuccess('Check your email for a verification code.');
+  });
+}
+
+function verify() {
+  const code = document.getElementById('verifyCode').value;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+
+  pendingUser.confirmRegistration(code, true, (err) => {
+    if (err) {
+      showError(err.message);
+      btn.disabled = false; btn.textContent = 'Verify Email';
+      return;
+    }
+    showSuccess('Email verified! Signing you in...');
+    setTimeout(() => { mode = 'signin'; signIn(); }, 1000);
+  });
+}
+
+window.onload = function() {
+  const user = userPool.getCurrentUser();
+  if (user) {
+    user.getSession((err, session) => {
+      if (!err && session.isValid()) window.location.href = '/';
+    });
+  }
+};
+</script>
+</body>
+</html>
