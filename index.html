@@ -487,7 +487,12 @@ window.onload = function() {
   if (user) {
     user.getSession((err, session) => {
       if (!err && session.isValid()) {
-        document.getElementById('navUser').textContent = user.getUsername();
+        user.getUserAttributes((err, attrs) => {
+		  if (!err) {
+			const name = attrs.find(a => a.getName() === 'name');
+			if (name) document.getElementById('navUser').textContent = name.getValue();
+		  }
+		});
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('logoutBtn').style.display = 'block';
       }
