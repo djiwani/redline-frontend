@@ -1,6 +1,10 @@
 # Redline — Frontend
 
-Static frontend for [Redline](https://redline.fourallthedogs.com), an AI-powered car marketplace. Deployed to S3 and served via CloudFront with WAF protection and a wildcard ACM certificate.
+Static frontend for [Redline](https://redline.fourallthedogs.com), an AI-powered car marketplace. Deployed to S3 and served globally via CloudFront with WAF protection and a wildcard ACM certificate.
+
+No build step required — pure HTML, CSS, and JavaScript.
+
+---
 
 ## Pages
 
@@ -12,36 +16,47 @@ Static frontend for [Redline](https://redline.fourallthedogs.com), an AI-powered
 | `messages.html` | Full negotiation history for the authenticated user |
 | `login.html` | Cognito hosted UI redirect and auth callback handler |
 
+---
+
 ## Auth Flow
 
-Authentication uses the **Amazon Cognito Identity JS SDK**. On sign-in, Cognito issues a JWT stored in the browser via the SDK. All pages read the current session via `userPool.getCurrentUser()` — no raw localStorage token handling.
+Uses the Amazon Cognito Identity JS SDK. On sign-in, Cognito issues a JWT stored by the SDK. All pages check session state via `userPool.getCurrentUser()` — no raw localStorage token handling.
 
-Protected pages (messages, negotiation) redirect unauthenticated users to the login page.
+Protected pages (`messages.html`, `negotiate.html`) redirect unauthenticated users to `login.html`.
 
-## Negotiation Flow (Frontend)
+---
+
+## Negotiation Flow
 
 1. User browses listings on `index.html`
 2. Clicks a listing → `listing.html` loads vehicle details from the listings API
-3. Authenticated user enters their max budget and hits **Negotiate Now**
-4. `listing.html` POSTs to `/negotiate/start` — the API runs all negotiation rounds synchronously
-5. On completion, user is redirected to `negotiate.html` with the outcome
-6. User can view full conversation history on `messages.html`
+3. Authenticated user enters their max budget and submits
+4. `listing.html` POSTs to `/negotiate/start` — all negotiation rounds run server-side synchronously via Bedrock
+5. On completion the user is redirected to `negotiate.html` with the deal outcome
+6. Full conversation history is available on `messages.html`
+
+---
 
 ## Infrastructure
 
-- **Hosting**: S3 (`redline-frontend` bucket, static website)
-- **CDN**: CloudFront distribution `E1FYHMQIX40Q8P`
-- **Security**: WAF WebACL on CloudFront, wildcard ACM cert
-- **DNS**: `redline.fourallthedogs.com` via Route53
+- **Hosting:** S3 static website
+- **CDN:** CloudFront with WAF WebACL and wildcard ACM certificate
+- **DNS:** `redline.fourallthedogs.com` via Route53
+
+All infrastructure managed in [redline-terraform](https://github.com/djiwani/redline-terraform).
+
+---
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/deploy-frontend.yml`) triggers on every push to `main`:
+GitHub Actions (`.github/workflows/deploy-frontend.yml`) triggers on every push to `main`:
 
-1. Syncs all files to S3 (`aws s3 sync`) with `--delete` to remove stale files
+1. Syncs all files to S3 with `--delete` to remove stale files
 2. Creates a CloudFront invalidation on `/*` to purge the cache
 
-No build step required — pure HTML/CSS/JS, no bundler.
+Changes are live within approximately 30 seconds.
+
+---
 
 ## Manual Deployment
 
@@ -62,7 +77,9 @@ aws cloudfront create-invalidation \
   --profile dev
 ```
 
+---
+
 ## Related Repositories
 
-- [redline-terraform](https://github.com/djiwani/redline-terraform) — All infrastructure
+- [redline-terraform](https://github.com/djiwani/redline-terraform) — All AWS infrastructure
 - [redline-api](https://github.com/djiwani/redline-api) — FastAPI microservices
